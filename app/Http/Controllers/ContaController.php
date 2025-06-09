@@ -37,5 +37,32 @@ class ContaController extends Controller
         return response()->json($conta, 201);
     }
 
-    // demais métodos: update, destroy...
+    public function update(Request $request, $id)
+    {
+        $conta = Conta::findOrFail($id);
+
+        $validated = $request->validate([
+            'banco'         => 'sometimes|required|string|max:255',
+            'agencia'       => 'sometimes|required|string',
+            'numero_conta'  => 'sometimes|required|string',
+            'chave_pix'     => 'nullable|string',
+            'saldo_inicial' => 'sometimes|required|numeric',
+        ]);
+
+        $conta = Conta::where('user_id', auth()->id())->findOrFail($id);
+        $conta->update([
+            'banco'         => $validated['banco'] ?? $conta->banco,
+            'agencia'       => $validated['agencia'] ?? $conta->agencia,
+            'numero_conta'  => $validated['numero_conta'] ?? $conta->numero_conta,
+            'chave_pix'     => $validated['chave_pix'] ?? $conta->chave_pix,
+            'saldo_inicial' => $validated['saldo_inicial'] ?? $conta->saldo_inicial,
+        ]);
+        return response()->json($conta, 200);
+    }
+
+    public function destroy($id)
+    {
+        Conta::findOrFail($id)->delete();
+        return response()->json(['message' => 'Conta excluída com sucesso.'], 200);
+    }
 }

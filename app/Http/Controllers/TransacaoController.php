@@ -85,4 +85,17 @@ class TransacaoController extends Controller
             'transacao'  => $transacao,
         ], 201);
     }
+
+    public function update(Request $request,$id)
+    {
+        $data = $request->validate([
+            'descricao' => 'nullable|string',
+            'valor'     => 'required|numeric',
+            'data'      => 'required|date',
+        ]);
+        $transacao = Transacao::where('user_id', auth()->id())->findOrFail($id);
+        $transacao->update($data);
+        return response()->json($transacao, 200);
+    }
+    
 }
