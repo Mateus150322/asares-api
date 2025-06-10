@@ -13,6 +13,11 @@ Route::post('/login',    [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    // Rota para retornar o usuário autenticado via token
+    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+        return response()->json($request->user());
+    });
+
     // Contas
     Route::get('/contas',              [ContaController::class, 'index']);
     Route::post('/contas',             [ContaController::class, 'store']);
@@ -26,4 +31,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Transações de uma conta específica
     Route::get('/contas/{conta}/transacoes', [TransacaoController::class, 'index']);
+
+    // Atualizar
+    Route::put('contas/{id}', [ContaController::class, 'update']);
+
+    // Excluir
+    Route::delete('contas/{id}', [ContaController::class, 'destroy']);
+
+    //transações: atualizar e excluir
+    Route::put('transacoes/{id}', [TransacaoController::class, 'update']);
+    Route::delete('transacoes/{id}', [TransacaoController::class, 'destroy']);
 });
